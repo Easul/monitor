@@ -4,8 +4,10 @@
 # - KEY_ALIAS: release key alias
 # - KEY_PASSWORD: release key password
 #
-# No repository variables are required. Push a v* tag to create a GitHub Release,
-# or run workflow_dispatch to build and upload APK artifacts only.
+# No repository variables are required. The workflow uses versionCode = 5000 +
+# origin/main commit count and versionName = <tag-or-input>+<commit6>.
+# Push a v* tag to create a GitHub Release, or run workflow_dispatch to build
+# and upload APK artifacts only.
 
 name: Release Android APK
 
@@ -30,6 +32,8 @@ jobs:
     outputs:
       commit_hash: ${{ steps.version.outputs.commit_hash }}
       version: ${{ steps.version.outputs.version }}
+      build_version: ${{ steps.version.outputs.build_version }}
+      version_code: ${{ steps.version.outputs.version_code }}
 
     steps:
       - name: Checkout code
@@ -57,10 +61,19 @@ jobs:
             VERSION="${{ github.event.inputs.version }}"
           fi
 
+          git fetch --no-tags origin main:refs/remotes/origin/main
+          COMMIT_COUNT=$(git rev-list --count origin/main)
+          VERSION_CODE=$((5000 + COMMIT_COUNT))
+          BUILD_VERSION="${VERSION}+${COMMIT_HASH}"
+
           echo "commit_hash=${COMMIT_HASH}" >> "$GITHUB_OUTPUT"
           echo "version=${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "build_version=${BUILD_VERSION}" >> "$GITHUB_OUTPUT"
+          echo "version_code=${VERSION_CODE}" >> "$GITHUB_OUTPUT"
           echo "Version: ${VERSION}"
           echo "Commit: ${COMMIT_HASH}"
+          echo "Build version: ${BUILD_VERSION}"
+          echo "Version code: ${VERSION_CODE}"
 
       - name: Decode keystore
         env:
@@ -106,6 +119,8 @@ jobs:
           SIGNING_PROPERTIES: temp/signing/signing.properties
           OUTPUT_DIR: app/release
           ABIS: arm64-v8a armeabi-v7a
+          BUILD_VERSION_CODE: ${{ steps.version.outputs.version_code }}
+          BUILD_VERSION_NAME: ${{ steps.version.outputs.build_version }}
         run: |
           chmod +x ./gradlew scripts/package_release_apks.sh
           scripts/package_release_apks.sh
@@ -169,7 +184,8 @@ jobs:
 
             ### 版本信息
 
-            - 版本: ${{ github.ref_name }}
+            - 版本: ${{ needs.build-android.outputs.build_version }}
+            - versionCode: ${{ needs.build-android.outputs.version_code }}
             - 提交: ${{ needs.build-android.outputs.commit_hash }}
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
