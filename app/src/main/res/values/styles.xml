@@ -1,0 +1,46 @@
+<resources>
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:statusBarColor">@color/warm_background</item>
+        <item name="android:navigationBarColor">@color/warm_background</item>
+        <item name="colorAccent">@color/warm_primary</item>
+        <item name="android:windowActionModeOverlay">true</item>
+    </style>
+
+    <style name="WarmInput">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">52dp</item>
+        <item name="android:background">@drawable/bg_input</item>
+        <item name="android:textColor">@color/warm_text</item>
+        <item name="android:textColorHint">@color/warm_text_secondary</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:singleLine">true</item>
+    </style>
+
+    <style name="CallIconButton">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginLeft">2dp</item>
+        <item name="android:layout_marginRight">2dp</item>
+        <item name="android:background">@drawable/bg_fab_warm</item>
+        <item name="android:elevation">0dp</item>
+        <item name="android:padding">9dp</item>
+        <item name="android:scaleType">centerInside</item>
+        <item name="android:stateListAnimator">@null</item>
+        <item name="android:translationZ">0dp</item>
+    </style>
+
+    <style name="CallDangerButton" parent="CallIconButton">
+        <item name="android:background">@drawable/bg_fab_danger</item>
+    </style>
+
+
+    <style name="BackIconButton">
+        <item name="android:layout_width">40dp</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:background">@drawable/bg_back_button</item>
+        <item name="android:padding">10dp</item>
+        <item name="android:scaleType">centerInside</item>
+    </style>
+</resources>

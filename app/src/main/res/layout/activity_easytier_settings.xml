@@ -1,0 +1,125 @@
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_warm_gradient">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:padding="24dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/backButton"
+                style="@style/BackIconButton"
+                android:contentDescription="返回"
+                android:src="@drawable/ic_back" />
+
+            <TextView
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginLeft="12dp"
+                android:layout_weight="1"
+                android:text="EasyTier 设置"
+                android:textColor="@color/warm_text"
+                android:textSize="30sp"
+                android:textStyle="bold" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical">
+
+            <EditText android:id="@+id/profileNameInput" style="@style/WarmInput" android:hint="配置名称" />
+            <EditText android:id="@+id/instanceNameInput" style="@style/WarmInput" android:layout_marginTop="10dp" android:hint="实例名称" />
+            <EditText android:id="@+id/networkNameInput" style="@style/WarmInput" android:layout_marginTop="10dp" android:hint="网络名称" />
+            <EditText android:id="@+id/networkSecretInput" style="@style/WarmInput" android:layout_marginTop="10dp" android:hint="网络密钥" />
+            <EditText android:id="@+id/ipv4Input" style="@style/WarmInput" android:layout_marginTop="10dp" android:hint="静态 IPv4" />
+
+            <CheckBox
+                android:id="@+id/autoStartControlledSwitch"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:buttonTint="@color/warm_primary"
+                android:text="开机后自动在后台作为被控端运行"
+                android:textColor="@color/warm_text"
+                android:textSize="15sp" />
+
+            <EditText
+                android:id="@+id/peersInput"
+                style="@style/WarmInput"
+                android:layout_marginTop="10dp"
+                android:gravity="top"
+                android:hint="Peer 地址，每行一个"
+                android:inputType="textMultiLine"
+                android:minHeight="150dp" />
+
+            <Button
+                android:id="@+id/saveProfileButton"
+                android:layout_width="match_parent"
+                android:layout_height="54dp"
+                android:layout_marginTop="16dp"
+                android:background="@drawable/bg_primary_button"
+                android:text="保存配置"
+                android:textColor="#FFFFFF" />
+        </LinearLayout>
+
+
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:background="@drawable/bg_card"
+            android:orientation="vertical">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="AI 助手"
+                android:textColor="@color/warm_text"
+                android:textSize="20sp"
+                android:textStyle="bold" />
+
+            <EditText
+                android:id="@+id/mimoBaseUrlInput"
+                style="@style/WarmInput"
+                android:layout_marginTop="12dp"
+                android:hint="Mimo Base URL，例如 https://example.com"
+                android:inputType="textUri" />
+
+            <EditText
+                android:id="@+id/mimoApiKeyInput"
+                style="@style/WarmInput"
+                android:layout_marginTop="10dp"
+                android:hint="Mimo API Key"
+                android:inputType="textPassword" />
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:text="默认调用 /v1/chat/completions；图片和音频使用 mimo-v2.5，文字使用 mimo-v2-flash / mimo-v2.5-pro，语音播报使用 mimo-v2.5-tts。"
+                android:textColor="@color/warm_text_secondary"
+                android:textSize="13sp" />
+        </LinearLayout>
+
+        <TextView
+            android:id="@+id/settingsStatusText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:background="@drawable/bg_status_pill"
+            android:textColor="@color/warm_text_secondary" />
+    </LinearLayout>
+</ScrollView>

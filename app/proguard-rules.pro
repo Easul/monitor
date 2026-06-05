@@ -1,0 +1,2 @@
+-keep class com.easytier.jni.** { *; }
+-keep class org.webrtc.** { *; }

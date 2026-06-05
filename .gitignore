@@ -1,0 +1,17 @@
+.gradle/
+.omo/
+/build/
+/app/build/
+/app/release/
+/captures/
+/temp/
+BUILD_REPORT.md
+PROJECT_SUMMARY.md
+*.iml
+local.properties
+*.log
+*.apk
+
+# Keep Gradle wrapper files committed:
+# gradle/wrapper/gradle-wrapper.jar
+# gradle/wrapper/gradle-wrapper.properties

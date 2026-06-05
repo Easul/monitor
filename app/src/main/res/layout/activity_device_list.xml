@@ -1,0 +1,93 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@drawable/bg_warm_gradient"
+    android:orientation="vertical"
+    android:padding="24dp">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center_vertical"
+        android:orientation="horizontal">
+
+        <ImageButton
+            android:id="@+id/backButton"
+            style="@style/BackIconButton"
+            android:contentDescription="返回"
+            android:src="@drawable/ic_back" />
+
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="12dp"
+            android:layout_weight="1"
+            android:text="选择被控设备"
+            android:textColor="@color/warm_text"
+            android:textSize="30sp"
+            android:textStyle="bold" />
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/deviceStatusText"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="12dp"
+        android:background="@drawable/bg_status_pill"
+        android:text="VPN 运行后刷新节点，点击被控设备即可开始视频通话。"
+        android:textColor="@color/warm_text_secondary" />
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_card"
+        android:orientation="vertical">
+
+        <Button
+            android:id="@+id/refreshPeersButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:background="@drawable/bg_primary_button"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:text="刷新被控设备"
+            android:textColor="#FFFFFF"
+            android:translationZ="0dp" />
+
+        <EditText
+            android:id="@+id/manualHostInput"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_input"
+            android:hint="被控设备 EasyTier IP，例如 10.126.x.x"
+            android:singleLine="true"
+            android:textColor="@color/warm_text"
+            android:textColorHint="@color/warm_text_secondary" />
+
+        <Button
+            android:id="@+id/connectManualButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_secondary_button"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:text="手动开始通话"
+            android:textColor="@color/warm_text"
+            android:translationZ="0dp" />
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/peerList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="18dp"
+        android:layout_weight="1"
+        android:background="@drawable/bg_card_soft"
+        android:clipToPadding="false"
+        android:divider="@color/warm_border"
+        android:dividerHeight="1dp"
+        android:padding="10dp" />
+</LinearLayout>

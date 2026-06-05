@@ -1,0 +1,18 @@
+<resources>
+    <color name="warm_background">#FFF8EF</color>
+    <color name="warm_background_deep">#F7EBDD</color>
+    <color name="warm_surface">#FFFFFB</color>
+    <color name="warm_surface_soft">#FFF3E2</color>
+    <color name="warm_primary">#7FA85C</color>
+    <color name="warm_primary_dark">#5F8642</color>
+    <color name="warm_primary_light">#E7F0DD</color>
+    <color name="warm_accent">#EFA35A</color>
+    <color name="warm_accent_soft">#FFE1BC</color>
+    <color name="warm_text">#2D241B</color>
+    <color name="warm_text_secondary">#8A7460</color>
+    <color name="warm_border">#EBDDCB</color>
+    <color name="call_scrim">#66000000</color>
+    <color name="call_fab">#EDE7DD</color>
+    <color name="call_fab_pressed">#F6D6AD</color>
+    <color name="call_danger">#D75E4E</color>
+</resources>

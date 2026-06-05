@@ -1,0 +1,10 @@
+package lightly.monitor.easytier
+import org.json.JSONArray
+import org.json.JSONObject
+
+data class PeerSummary(val name:String,val ip:String,val latency:String,val mode:String,val status:String,val peerId:String?=null,val remoteReachable:Boolean=false)
+object EasyTierNetworkInfoAnalyzer{fun extractInstanceIpv4(networkInfo:JSONObject?,instanceName:String):String?=currentInstanceNetworkInfo(networkInfo,instanceName)?.let{decodeIpv4(it.optJSONObject("my_node_info")?.optJSONObject("virtual_ipv4"))}
+ fun currentInstanceNetworkInfo(networkInfo:JSONObject?,instanceName:String):JSONObject?{if(networkInfo==null)return null;val map=networkInfo.optJSONObject("map")?:return networkInfo;map.optJSONObject(instanceName)?.let{return it};val keys=map.keys();return if(keys.hasNext())map.optJSONObject(keys.next()) else null}
+ fun buildPeerSummaries(networkInfo:JSONObject?,instanceName:String):List<PeerSummary>{val i=currentInstanceNetworkInfo(networkInfo,instanceName)?:return emptyList();val routes=i.optJSONArray("routes")?:return emptyList();val out= mutableListOf<PeerSummary>();for(n in 0 until routes.length()){val r=routes.optJSONObject(n)?:continue;if(r.optJSONObject("feature_flag")?.optBoolean("is_public_server",false)==true)continue;val ip=decodeIpv4(r.optJSONObject("ipv4_addr"));out+=PeerSummary(r.optString("hostname","Peer"),ip?:"Unassigned IP","${r.opt("path_latency")?:"-"} ms",if(r.optInt("cost",0)<=1)"Direct" else "Relay","Stable",r.optLong("peer_id",0).toString(),ip!=null)};return out}
+ fun buildDiagnostics(networkInfo:JSONObject?,instanceName:String)=listOf(if(extractInstanceIpv4(networkInfo,instanceName)==null)"Waiting for virtual IPv4 assignment." else "No obvious network anomalies.")
+ fun decodeIpv4(o:JSONObject?):String?{val a=o?.optJSONObject("address")?:return null;if(!a.has("addr"))return null;val v=a.optLong("addr") and 0xffffffffL;val ip=listOf((v shr 24)and 255,(v shr 16)and 255,(v shr 8)and 255,v and 255).joinToString(".");return if(o.has("network_length"))"$ip/${o.optInt("network_length")}" else ip}}
