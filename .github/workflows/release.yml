@@ -53,7 +53,7 @@ jobs:
       - name: Get version info
         id: version
         run: |
-          COMMIT_HASH=$(git rev-parse --short=6 HEAD)
+          COMMIT_HASH=$(git rev-parse HEAD | cut -c1-6)
 
           if [ "${{ github.event_name }}" = "push" ]; then
             VERSION="${{ github.ref_name }}"
