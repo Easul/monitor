@@ -22,6 +22,13 @@ require_cmd_file() {
   }
 }
 
+require_cmd() {
+  command -v "$1" >/dev/null 2>&1 || {
+    echo "Missing command: $1" >&2
+    exit 1
+  }
+}
+
 property() {
   local key="$1"
   local value
@@ -36,6 +43,31 @@ property() {
 require_file "$SIGNING_PROPERTIES"
 require_cmd_file "$BUILD_TOOLS_DIR/zipalign"
 require_cmd_file "$BUILD_TOOLS_DIR/apksigner"
+require_cmd git
+
+if [ -z "${BUILD_VERSION_CODE:-}" ]; then
+  if git -C "$PROJECT_ROOT" rev-parse --verify origin/main >/dev/null 2>&1; then
+    MAIN_COMMIT_COUNT="$(git -C "$PROJECT_ROOT" rev-list --count origin/main)"
+  else
+    MAIN_COMMIT_COUNT="$(git -C "$PROJECT_ROOT" rev-list --count HEAD)"
+  fi
+  BUILD_VERSION_CODE="$((5000 + MAIN_COMMIT_COUNT))"
+fi
+
+if [ -z "${BUILD_VERSION_NAME:-}" ]; then
+  COMMIT_HASH="$(git -C "$PROJECT_ROOT" rev-parse HEAD | cut -c1-6)"
+  VERSION_TAG="$(git -C "$PROJECT_ROOT" tag --points-at HEAD --list 'v*' | sort -V | tail -n 1)"
+  if [ -z "$VERSION_TAG" ]; then
+    VERSION_TAG="v0.0.0"
+  fi
+  BUILD_VERSION_NAME="${VERSION_TAG}+${COMMIT_HASH}"
+fi
+
+export BUILD_VERSION_CODE
+export BUILD_VERSION_NAME
+
+echo "==> Version code: $BUILD_VERSION_CODE"
+echo "==> Version name: $BUILD_VERSION_NAME"
 
 STORE_FILE="$(property storeFile)"
 STORE_PASSWORD="$(property storePassword)"
