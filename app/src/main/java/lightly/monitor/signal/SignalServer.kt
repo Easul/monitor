@@ -1,5 +1,6 @@
 package lightly.monitor.signal
 
+import android.os.Build
 import android.util.Log
 import java.io.BufferedReader
 import java.io.IOException
@@ -60,7 +61,7 @@ class SignalServer(private val port: Int = DEFAULT_PORT) {
         connection.listen(
             onMessage = { message ->
                 if (message is SignalMessage.Probe) {
-                    connection.sendBlocking(SignalMessage.ProbeResponse())
+                    connection.sendBlocking(SignalMessage.ProbeResponse(deviceName = Build.MODEL ?: "Android"))
                     connection.close()
                     return@listen
                 }
@@ -81,9 +82,17 @@ class SignalConnection(private val socket: Socket) {
     private val sendExecutor = Executors.newSingleThreadExecutor { runnable -> Thread(runnable, "SignalSend") }
     @Volatile private var closed = false
 
+    init {
+        runCatching {
+            socket.keepAlive = true
+            socket.tcpNoDelay = true
+        }
+        startHeartbeat()
+    }
+
     fun send(message: SignalMessage) {
         if (closed) return
-        sendExecutor.execute {
+        runCatching { sendExecutor.execute {
             if (closed) return@execute
             runCatching {
                 val encoded = SignalCodec.encodeLine(message).toByteArray(Charsets.UTF_8)
@@ -93,7 +102,11 @@ class SignalConnection(private val socket: Socket) {
                 }
             }.onFailure { error ->
                 if (!closed) Log.e(TAG, "Signal send failed", error)
+                close()
             }
+        } }.onFailure { error ->
+            if (!closed) Log.e(TAG, "Signal send queue failed", error)
+            close()
         }
     }
 
@@ -107,6 +120,16 @@ class SignalConnection(private val socket: Socket) {
             }
         }.onFailure { error ->
             if (!closed) Log.e(TAG, "Signal send failed", error)
+            close()
+        }
+    }
+
+    private fun startHeartbeat() {
+        thread(name = "SignalHeartbeat", isDaemon = true) {
+            while (!closed) {
+                runCatching { Thread.sleep(HEARTBEAT_INTERVAL_MS) }.onFailure { return@thread }
+                if (!closed) send(SignalMessage.Heartbeat())
+            }
         }
     }
 
@@ -133,5 +156,5 @@ class SignalConnection(private val socket: Socket) {
         sendExecutor.shutdownNow()
     }
 
-    companion object { private const val TAG = "SignalConnection" }
+    companion object { private const val TAG = "SignalConnection"; private const val HEARTBEAT_INTERVAL_MS = 15_000L }
 }

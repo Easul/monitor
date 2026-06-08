@@ -56,7 +56,7 @@ fi
 
 if [ -z "${BUILD_VERSION_NAME:-}" ]; then
   COMMIT_HASH="$(git -C "$PROJECT_ROOT" rev-parse HEAD | cut -c1-6)"
-  VERSION_TAG="$(git -C "$PROJECT_ROOT" tag --points-at HEAD --list 'v*' | sort -V | tail -n 1)"
+  VERSION_TAG="$(git -C "$PROJECT_ROOT" tag --merged HEAD --list 'v*' | sort -V | tail -n 1)"
   if [ -z "$VERSION_TAG" ]; then
     VERSION_TAG="v0.0.0"
   fi

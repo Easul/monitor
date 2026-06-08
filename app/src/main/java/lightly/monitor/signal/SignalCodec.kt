@@ -17,7 +17,7 @@ object SignalCodec {
             "command" -> SignalCommand.fromWireName(json.optString("command"))?.let { SignalMessage.Command(it, if (json.has("enabled")) json.optBoolean("enabled") else null, json.optLong("id"), json.optLong("ts")) }
             "battery" -> SignalMessage.Battery(json.optInt("level"), json.optBoolean("charging"), json.optLong("id"), json.optLong("ts"))
             "probe" -> SignalMessage.Probe(json.optLong("id"), json.optLong("ts"))
-            "probe_response" -> SignalMessage.ProbeResponse(json.optString("magic"), json.optLong("id"), json.optLong("ts"))
+            "probe_response" -> SignalMessage.ProbeResponse(json.optString("magic"), json.optString("deviceName").takeIf { it.isNotEmpty() }, json.optLong("id"), json.optLong("ts"))
             else -> null
         }
     }.getOrNull()
@@ -32,6 +32,6 @@ object SignalCodec {
         is SignalMessage.Command -> { put("type", "command"); put("command", message.command.wireName); if (message.enabled != null) put("enabled", message.enabled) }
         is SignalMessage.Battery -> { put("type", "battery"); put("level", message.level); put("charging", message.charging) }
         is SignalMessage.Probe -> put("type", "probe")
-        is SignalMessage.ProbeResponse -> { put("type", "probe_response"); put("magic", message.magic) }
+        is SignalMessage.ProbeResponse -> { put("type", "probe_response"); put("magic", message.magic); put("deviceName", message.deviceName) }
     } }
 }

@@ -31,6 +31,13 @@ class ControlledDeviceHistoryStore(private val context: Context) {
         }
     }
 
+    suspend fun deleteDevice(ip: String) {
+        val remaining = loadDevices().filterNot { it.ip == ip }
+        context.controlledDeviceHistoryDataStore.edit { values ->
+            values[devicesKey] = JSONArray(remaining.map { it.toJson() }).toString()
+        }
+    }
+
     private fun decode(raw: String?): List<StoredControlledDevice> {
         if (raw.isNullOrBlank()) return emptyList()
         return runCatching {

@@ -10,7 +10,7 @@ sealed class SignalMessage(open val id: Long = now(), open val timestamp: Long =
     data class Command(val command: SignalCommand, val enabled: Boolean? = null, override val id: Long = now(), override val timestamp: Long = now()) : SignalMessage(id, timestamp)
     data class Battery(val level: Int, val charging: Boolean, override val id: Long = now(), override val timestamp: Long = now()) : SignalMessage(id, timestamp)
     data class Probe(override val id: Long = now(), override val timestamp: Long = now()) : SignalMessage(id, timestamp)
-    data class ProbeResponse(val magic: String = CONTROLLED_READY_MAGIC, override val id: Long = now(), override val timestamp: Long = now()) : SignalMessage(id, timestamp)
+    data class ProbeResponse(val magic: String = CONTROLLED_READY_MAGIC, val deviceName: String? = null, override val id: Long = now(), override val timestamp: Long = now()) : SignalMessage(id, timestamp)
     companion object {
         const val CONTROLLED_READY_MAGIC = "LIGHTLY_MONITOR_CONTROLLED_READY"
         fun now(): Long = System.currentTimeMillis()

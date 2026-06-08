@@ -67,6 +67,18 @@
             android:textColorHint="@color/warm_text_secondary" />
 
         <Button
+            android:id="@+id/saveManualDeviceButton"
+            android:layout_width="match_parent"
+            android:layout_height="52dp"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_secondary_button"
+            android:elevation="0dp"
+            android:stateListAnimator="@null"
+            android:text="保存被控设备 IP"
+            android:textColor="@color/warm_text"
+            android:translationZ="0dp" />
+
+        <Button
             android:id="@+id/connectManualButton"
             android:layout_width="match_parent"
             android:layout_height="52dp"

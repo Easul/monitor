@@ -116,18 +116,18 @@ class EasyTierManager(private val context: Context) {
 
     private fun startMonitor(instanceName: String) {
         stopMonitor(); runningInstanceName = instanceName; currentIpv4 = null; currentProxyCidrs = emptyList(); missingInfoTicks = 0; notRunningTicks = 0; restartInProgress = false
-        monitorRunnable = object : Runnable { override fun run() { try { monitorStatus() } finally { handler.postDelayed(this, 3000) } } }
+        monitorRunnable = object : Runnable { override fun run() { try { monitorStatus() } finally { handler.postDelayed(this, MONITOR_INTERVAL_MS) } } }
         monitorRunnable?.let(handler::post)
     }
     private fun stopMonitor() { monitorRunnable?.let(handler::removeCallbacks); monitorRunnable = null; runningInstanceName = null; currentIpv4 = null; currentProxyCidrs = emptyList() }
     private fun monitorStatus() {
         val instanceName = runningInstanceName ?: return
         val infosJson = callEasyTier("collectNetworkInfos") { EasyTierJNI.collectNetworkInfos(10) }
-        if (infosJson.isNullOrBlank()) { if (++missingInfoTicks >= 4) restartEasyTierInstance("missing-network-info"); return }
+        if (infosJson.isNullOrBlank()) { if (++missingInfoTicks >= MISSING_INFO_RESTART_TICKS) restartEasyTierInstance("missing-network-info"); return }
         missingInfoTicks = 0
         val root = runCatching { JSONObject(infosJson) }.getOrNull() ?: return
         val networkInfo = root.optJSONObject("map")?.optJSONObject(instanceName) ?: return
-        if (!networkInfo.optBoolean("running", false)) { if (++notRunningTicks >= 2) restartEasyTierInstance("instance-not-running"); return }
+        if (!networkInfo.optBoolean("running", false)) { if (++notRunningTicks >= NOT_RUNNING_RESTART_TICKS) restartEasyTierInstance("instance-not-running"); return }
         notRunningTicks = 0
         val virtualIpv4 = EasyTierNetworkInfoAnalyzer.extractInstanceIpv4(root, instanceName) ?: return
         val proxyCidrs = extractProxyCidrs(networkInfo)
@@ -136,8 +136,14 @@ class EasyTierManager(private val context: Context) {
     private fun extractProxyCidrs(networkInfo: JSONObject): List<String> {
         val routes = networkInfo.optJSONArray("routes") ?: return emptyList()
         val proxyCidrs = mutableListOf<String>()
-        for (i in 0 until routes.length()) { val cidrs = routes.optJSONObject(i)?.optJSONArray("proxy_cidrs") ?: continue; for (j in 0 until cidrs.length()) cidrs.optString(j).takeIf { it.isNotBlank() }?.let(proxyCidrs::add) }
-        return proxyCidrs.distinct()
+        for (i in 0 until routes.length()) { val cidrs = routes.optJSONObject(i)?.optJSONArray("proxy_cidrs") ?: continue; for (j in 0 until cidrs.length()) cidrs.optString(j).takeIf { it.isNotBlank() }?.let(::normalizeProxyCidr)?.let(proxyCidrs::add) }
+        return proxyCidrs.distinct().sorted()
+    }
+    private fun normalizeProxyCidr(cidr: String): String? {
+        return runCatching {
+            val (route, length) = EasyTierRouteNormalizer.parseRoute(cidr)
+            if (route.startsWith(EASYTIER_OVERLAY_PREFIX) && length >= EASYTIER_OVERLAY_PREFIX_LENGTH) "$route/$length" else null
+        }.getOrNull()
     }
     private fun restartEasyTierInstance(reason: String) {
         val config = runningConfig; val instanceName = runningInstanceName
@@ -204,7 +210,7 @@ class EasyTierManager(private val context: Context) {
         return if (index >= 0 && !isNull(index)) getLong(index) else null
     }
 
-    companion object { private const val TAG = "EasyTierManager"; private val LIGHTLY_NETWORK_INFO_URI = Uri.parse("content://lightly.tool.easytier/network_info"); const val REQUEST_VPN_PERMISSION = 7201; fun requestVpnPermission(activity: Activity): Boolean { val intent = VpnService.prepare(activity) ?: return true; activity.startActivityForResult(intent, REQUEST_VPN_PERMISSION); return false } }
+    companion object { private const val TAG = "EasyTierManager"; private const val MONITOR_INTERVAL_MS = 3000L; private const val MISSING_INFO_RESTART_TICKS = 10; private const val NOT_RUNNING_RESTART_TICKS = 5; private const val EASYTIER_OVERLAY_PREFIX = "10.126.126."; private const val EASYTIER_OVERLAY_PREFIX_LENGTH = 24; private val LIGHTLY_NETWORK_INFO_URI = Uri.parse("content://lightly.tool.easytier/network_info"); const val REQUEST_VPN_PERMISSION = 7201; fun requestVpnPermission(activity: Activity): Boolean { val intent = VpnService.prepare(activity) ?: return true; activity.startActivityForResult(intent, REQUEST_VPN_PERMISSION); return false } }
 }
 
 data class LightlyEasyTierNetworkInfo(
