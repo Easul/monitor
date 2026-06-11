@@ -8,7 +8,7 @@ It can either start its own EasyTier VPN or reuse the EasyTier state exposed by 
 
 ## Features
 
-- **Device discovery**: probes known controlled endpoints first, then uses EasyTier routes and VPN subnet scanning
+- **Device discovery**: shows and probes saved controlled endpoints first, supports manual save/delete by IP, and scans the `10.126.126.100-150` overlay range for online devices
 - **Audio/video session**: connects to controlled devices through WebRTC with two-way voice and remote camera video
 - **AI analysis**: captures the remote frame, calls a Mimo gateway for Chinese analysis, and plays speech through the call route
 - **EasyTier integration**: supports both Monitor-owned VPN and reused Lightly VPN modes
@@ -33,7 +33,7 @@ Requirements:
 1. Install and open Monitor
 2. Configure EasyTier network name, secret, peer URI, and local virtual IPv4
 3. Start Monitor's own EasyTier instance, or start EasyTier VPN from Lightly first
-4. Refresh the device list and select a discovered controlled device
+4. Refresh the device list and select a discovered controlled device; you can also enter `10.126.126.x[:port]` manually and save it for priority probing later
 5. In the session screen, enable voice, remote camera, or AI analysis as needed
 
 ## Documentation

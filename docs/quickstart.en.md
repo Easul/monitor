@@ -34,14 +34,13 @@ A basic EasyTier profile usually includes:
 
 When the device list is refreshed, Monitor searches in this order:
 
-1. Probe historical controlled endpoint IP/port records first
-2. If a historical endpoint is reachable, show it immediately and skip slow scanning
-3. If a system VPN is active, read Lightly Provider data and only accept rows where `is_running == true`
-4. If Provider data is unavailable, read Monitor's local JNI network state
-5. Parse EasyTier routes and probe controlled signaling services on reachable peers
-6. If route discovery finds nothing and VPN is active, scan the current VPN IPv4 subnet
+1. Show locally saved controlled endpoint IP/port records first so common devices are selectable without waiting for a scan
+2. Probe those historical devices first; when reachable, the returned controlled-device name refreshes the list
+3. If historical devices are unreachable, scan the fixed `10.126.126.100-150` overlay range on the default signaling port
+4. If the default port finds nothing, probe the supported fallback controlled endpoint port range
+5. Newly discovered devices are saved locally and shown first on later refreshes
 
-The local history keeps up to 32 IP/port entries.
+You can enter `10.126.126.x` or `10.126.126.x:port` and tap “保存被控设备 IP” to save a controlled endpoint manually. Use the `×` button in the list to delete a saved device. The local history keeps up to 32 IP/port entries.
 
 ## Session Usage
 
@@ -89,7 +88,7 @@ adb shell getprop ro.product.cpu.abilist
 - Confirm the controlled endpoint service is running
 - Confirm both devices are in the same EasyTier network or another reachable network
 - Check whether the historical IP is stale
-- Check whether Lightly Provider reports `is_running == true`
+- If the controlled endpoint is outside `10.126.126.100-150`, enter and save its IP/port manually
 
 ### AI analysis fails
 
