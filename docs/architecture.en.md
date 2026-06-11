@@ -37,11 +37,9 @@ All user-facing UI strings stay in Chinese.
 `DeviceListActivity` refreshes the device list. Main dependencies:
 
 - `ControlledDeviceHistoryStore`: historical controlled endpoint IP/port records
-- `EasyTierManager`: local Monitor JNI state and Lightly Provider access
-- `EasyTierNetworkInfoAnalyzer`: parser for raw `collectNetworkInfos(10)` JSON
-- Controlled endpoint probing: checks whether candidate peers expose the default signaling port
+- Controlled endpoint probing: checks whether historical devices, manually saved devices, and the fixed overlay range expose a signaling port
 
-Historical endpoint hits skip slow scanning to reduce controller-side waiting time.
+The device list shows locally saved endpoints before probing online state. When an endpoint responds, the name from `probe_response` refreshes the display. If historical endpoints are unreachable, Monitor scans `10.126.126.100-150`; when the default port finds nothing, it probes fallback ports. Manual save and list deletion update local history through `ControlledDeviceHistoryStore`.
 
 ### WebRTC Session
 
@@ -104,11 +102,11 @@ Do not globally change `EasyTierManager.getNetworkInfo()` to read Lightly Provid
 
 ```text
 Refresh device list
-  → Historical IP probing
-  → Lightly Provider or Monitor JNI network info
-  → EasyTier route parsing
-  → Signaling port probing
-  → VPN subnet scanning when needed
+  → Show saved IP/port records
+  → Probe historical devices
+  → Scan fixed overlay range (10.126.126.100-150)
+  → Probe fallback ports when the default port finds nothing
+  → Save newly discovered devices
 ```
 
 ### AI Analysis

@@ -123,6 +123,8 @@ ANDROID_PLATFORM=21
 - `workflow_dispatch` 可手动触发构建
 - CI 使用 Java 17 和仓库内 Gradle wrapper
 - release job 依赖 GitHub Secrets 中的 keystore 与签名密码
+- release 版本名优先使用当前提交已合并的最新 `v*` tag；无 tag 时回退到 `v0.0.0+<commit6>`
+- workflow 手动触发时使用输入版本，tag 触发时使用 tag 名，并用 `origin/main` 提交数生成单调递增的 `versionCode`
 
 ## 相关文档
 

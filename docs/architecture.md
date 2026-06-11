@@ -37,11 +37,9 @@ Lightly Monitor 是一个以 Kotlin 原生 Android 为主体、结合 EasyTier J
 `DeviceListActivity` 负责刷新设备列表，核心依赖：
 
 - `ControlledDeviceHistoryStore`：历史被控端 IP/端口
-- `EasyTierManager`：Monitor 本地 JNI 状态与 Lightly Provider 读取
-- `EasyTierNetworkInfoAnalyzer`：解析 `collectNetworkInfos(10)` 原始 JSON
-- 被控端信令探测：检查候选 peer 是否开放默认信令端口
+- 被控端信令探测：检查历史设备、手动保存设备与固定 overlay 地址段是否开放信令端口
 
-历史 endpoint 命中后会跳过慢扫描，这是为了减少控制端等待时间。
+设备列表会先显示本地保存的 endpoint，再探测在线状态；命中后会使用 `probe_response` 中的设备名更新展示。未命中时扫描 `10.126.126.100-150`，默认端口无结果再探测备用端口。手动保存和列表删除都通过 `ControlledDeviceHistoryStore` 更新本地历史。
 
 ### WebRTC 会话
 
@@ -104,11 +102,11 @@ Provider 数据必须满足 `is_running == true` 才用于发现。`raw_network_
 
 ```text
 刷新设备列表
-  → 历史 IP 探测
-  → Lightly Provider 或 Monitor JNI 网络信息
-  → EasyTier routes 解析
-  → 信令端口探测
-  → 必要时扫描 VPN 子网
+  → 展示已保存 IP/端口
+  → 历史设备信令探测
+  → 固定 overlay 地址段扫描（10.126.126.100-150）
+  → 默认端口无结果时探测备用端口
+  → 保存新发现设备
 ```
 
 ### AI 分析

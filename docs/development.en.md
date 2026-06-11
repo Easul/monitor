@@ -123,6 +123,8 @@ Do not commit:
 - `workflow_dispatch` can be used for manual builds
 - CI uses Java 17 and the repository Gradle wrapper
 - The release job expects keystore and signing passwords in GitHub Secrets
+- Release version names prefer the latest merged `v*` tag for the current commit; without a tag they fall back to `v0.0.0+<commit6>`
+- Manual workflow runs use the input version, tag-triggered runs use the tag name, and `versionCode` is generated from the `origin/main` commit count so it stays monotonically increasing
 
 ## Related Documentation
 
