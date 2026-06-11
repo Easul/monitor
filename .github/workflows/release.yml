@@ -178,6 +178,7 @@ jobs:
             ### 功能特性
 
             - 支持 Monitor 自有 EasyTier VPN 与复用 Lightly EasyTier VPN
+            - 支持已保存被控端优先展示、手动保存/删除 IP、固定 overlay 地址段扫描
             - 支持被控端发现、WebRTC 双向语音、远端摄像头画面
             - 支持 Mimo AI 画面分析与语音播报
             - 发布包提供 arm64-v8a 与 armeabi-v7a 两个 ABI 分包
